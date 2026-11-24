@@ -34,7 +34,7 @@ Celem pracy było przygotowanie w chmurze AWS rozwiązania, które:
 ## Struktura repozytorium
 
 ```
-praca_dyplomowa/
+.
 ├── 1_pobieranie_danych/              # uruchamiane w AWS Cloud9
 │   ├── create_bucket.py              # utworzenie bucketu w Amazon S3
 │   ├── download_data_from_api.py     # pobranie danych z API Stack Exchange -> pliki JSON w S3
@@ -44,7 +44,8 @@ praca_dyplomowa/
 │   └── analiza_askubuntu.ipynb       # wczytanie danych, pytania analityczne a-j, zapis wyników
 ├── 3_raport/                         # uruchamiane lokalnie
 │   └── download_results_from_s3.py   # pobranie wyników (xlsx) z S3 do Power BI
-└── img/                              # schemat architektury i wykresy wyników
+├── img/                              # schemat architektury i wykresy wyników
+└── README.md
 ```
 
 ## Dane
@@ -135,29 +136,6 @@ python download_results_from_s3.py   # pobiera pliki xlsx z wynikami
 ```
 
 Pobrane pliki stanowią źródło danych raportu w Power BI Desktop.
-
-## Uwagi do kodu
-
-Kod został uporządkowany przed publikacją. Zakres pracy jest bez zmian, ale wprowadzono kilka poprawek:
-
-* **Dane dostępowe do API** nie są już zapisane w kodzie, tylko w zmiennych środowiskowych.
-* **Pobieranie danych:** trzy prawie identyczne skrypty (osobne dla posts, answers, users) połączono w jeden
-  `download_data_from_api.py` z listą tabel, tak jak opisano w pracy. Zakres dat każdego roku liczony jest
-  teraz z kalendarza, a nie przez odejmowanie 365 dni (lata przestępne przesuwały granice). Dodano obsługę błędów API
-  i przerwę przed ponowieniem zapytania po przekroczeniu czasu.
-* **`spark.rpc.message.maxSize`:** parametr podaje się w MB (maksymalnie 2047), a w pierwotnej wersji wpisana była
-  wartość w bajtach. Nowa sesja Spark nie uruchomi się z taką wartością; w EMR Notebook ustawienie było pomijane,
-  bo sesja już istniała.
-* **Pytanie d)** wynik 61,42% z pracy to odsetek pytań, w których żadna odpowiedź nie została zaakceptowana.
-  Notebook oblicza go nadal, a dodatkowo liczy wartość dokładnie odpowiadającą treści pytania: jak często
-  zaakceptowana odpowiedź ma niższą ocenę niż najlepsza odpowiedź.
-* **Pytanie h)** liczenie słów nie przenosi już wszystkich słów do jednego wiersza (`collect_list`), tylko korzysta
-  z `explode`, więc obliczenia rozkładają się na cały klaster. Usuwane są też encje HTML (np. `&quot;`).
-* **Pytanie g)** liczba pytań dla każdego tagu liczona jest w jednym zapytaniu, a lista tagów pochodzi z wyniku
-  pytania f), a nie z ręcznie wpisanej listy.
-* **Pytanie i)** liczone jest przez *left join* użytkowników z ich postami, więc wynik nie obejmuje postów
-  autorów spoza tabeli użytkowników ani postów bez autora.
-* **Pytanie b)** pominięto konto systemowe *Community* (bot, `user_id = -1`).
 
 ## Możliwe kierunki rozwoju
 
