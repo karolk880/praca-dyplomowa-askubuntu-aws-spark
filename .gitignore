@@ -1,0 +1,5 @@
+# pobrane dane i wyniki (duże pliki, nie trafiają do repozytorium)
+*.json
+*.xlsx
+.ipynb_checkpoints/
+__pycache__/
